@@ -1,3 +1,153 @@
+# İmleçler (MYP217)
+
+---
+
+## 1. İmleç (Cursor) Tanımı ve Kullanımı
+
+**İmleç (Cursor):** Bir SQL sorgusunun sonuç kümesini satır satır işlemek için kullanılan yapıdır. İmleçler, veri tabanından çekilen çoklu kayıtlarla çalışmak için kullanılır.
+
+### İmleç Tipleri
+1. **Statik İmleçler:** Sorgu sonucunu bellekte saklar ve sonuçlar değişmez.
+2. **Dinamik İmleçler:** Veri tabanındaki değişikliklere bağlı olarak güncellenebilir.
+
+---
+
+## 2. İmleç Tanımlama ve Kullanımı
+
+### İmleç Tanımlama Formatı:
+```sql
+DECLARE
+   cursor_name CURSOR FOR SELECT_query;
+```
+
+**Örnek İmleç Tanımı:**
+```sql
+DECLARE
+   emp_cursor CURSOR FOR
+   SELECT employee_id, first_name, last_name FROM employees;
+```
+Bu örnekte `emp_cursor` adında bir imleç tanımlanmıştır.
+
+---
+
+## 3. İmlecin Açılması ve Kapatılması
+
+- **İmleç Açma:** `OPEN` komutu ile yapılır.
+- **İmleç Kapatma:** `CLOSE` komutu ile yapılır.
+
+### İmleç Açma ve Kapatma Örnekleri:
+```sql
+BEGIN
+   OPEN emp_cursor;
+   CLOSE emp_cursor;
+END;
+```
+---
+
+## 4. FETCH Komutu ile Veri Okuma
+
+**FETCH:** İmleçten bir satır çekmek için kullanılır.
+
+### FETCH Kullanımı:
+```sql
+FETCH cursor_name INTO variable_list;
+```
+
+**Örnek:**
+```sql
+DECLARE
+   emp_cursor CURSOR FOR
+   SELECT employee_id, first_name FROM employees;
+   v_id employees.employee_id%TYPE;
+   v_name employees.first_name%TYPE;
+BEGIN
+   OPEN emp_cursor;
+   FETCH emp_cursor INTO v_id, v_name;
+   CLOSE emp_cursor;
+END;
+```
+Bu örnekte, `emp_cursor` imleci açılmış, bir kayıt okunmuş ve daha sonra kapatılmıştır.
+
+---
+
+## 5. İmleç Kullanımı ile Döngü
+
+İmleçler genellikle döngülerle birlikte kullanılır. Bu sayede sonuç kümesindeki tüm kayıtlar işlenebilir.
+
+### İmleç ile Döngü Formatı:
+```sql
+LOOP
+   FETCH cursor_name INTO variable_list;
+   EXIT WHEN cursor_name%NOTFOUND;
+END LOOP;
+```
+
+**Örnek:**
+```sql
+DECLARE
+   emp_cursor CURSOR FOR
+   SELECT employee_id, first_name FROM employees;
+   v_id employees.employee_id%TYPE;
+   v_name employees.first_name%TYPE;
+BEGIN
+   OPEN emp_cursor;
+   LOOP
+      FETCH emp_cursor INTO v_id, v_name;
+      EXIT WHEN emp_cursor%NOTFOUND;
+      DBMS_OUTPUT.PUT_LINE('ID: ' || v_id || ', Name: ' || v_name);
+   END LOOP;
+   CLOSE emp_cursor;
+END;
+```
+Bu örnekte, `emp_cursor` imleci açılmış, döngü içinde tüm kayıtlar okunmuş ve ekrana yazdırılmıştır.
+
+---
+
+## 6. Parametreli İmleçler
+
+Parametreli imleçler, dışarıdan değer alarak çalıştırılan imleçlerdir.
+
+### Parametreli İmleç Tanımlama:
+```sql
+DECLARE
+   cursor_name (parametre_değişkeni DATATYPE) CURSOR FOR SELECT_query;
+```
+
+**Örnek:**
+```sql
+DECLARE
+   emp_cursor(p_department_id NUMBER) CURSOR FOR
+   SELECT employee_id, first_name FROM employees WHERE department_id = p_department_id;
+BEGIN
+   OPEN emp_cursor(50);
+   -- İşlemler
+   CLOSE emp_cursor;
+END;
+```
+Bu örnekte, `emp_cursor` imleci bir departman numarası parametresi ile çalıştırılmıştır.
+
+---
+
+## 7. İmleç Özellikleri
+
+- **%FOUND:** Son `FETCH` işlemi bir kayıt döndürdü mü?
+- **%NOTFOUND:** Son `FETCH` işlemi kayıt döndürmedi mi?
+- **%ROWCOUNT:** İmleç ile kaç satır işlendiğini döndürür.
+
+### Örnek Kullanım:
+```sql
+BEGIN
+   OPEN emp_cursor;
+   FETCH emp_cursor INTO v_id, v_name;
+   IF emp_cursor%FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Kayıt bulundu.');
+   END IF;
+   CLOSE emp_cursor;
+END;
+```
+
+---
+
 # Saklı Yordamlar ve Fonksiyonlar (MYP217)
 
 ---
