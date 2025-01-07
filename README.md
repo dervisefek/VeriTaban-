@@ -309,5 +309,3 @@ SELECT maas_hesapla(5000, 10) FROM DUAL;
 Bu sorgunun sonucu `5500` olacaktır.
 
 ---
-
-Bu notlar, PDF'deki temel konulara ve örnek kodlara dayanmaktadır. Kodları doğrudan çalıştırarak test edebilirsiniz.
